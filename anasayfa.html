@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konfeti Efektli Sayfa</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            animation: colorChange 6s infinite alternate;
+            position: relative;
+            color: white;
+        }
+
+        @keyframes colorChange {
+            0% { background: #1a1a2e; }
+            25% { background: #25274d; }
+            50% { background: #16213e; }
+            75% { background: #0f3460; }
+            100% { background: #1a1a2e; }
+        }
+
+        button {
+            background: #ff4d4d;
+            color: white;
+            font-size: 24px;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            margin: 10px;
+        }
+
+        button:hover {
+            background: #ff3333;
+            box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.9);
+        }
+
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: moveStars 10s linear infinite;
+        }
+
+        @keyframes moveStars {
+            from { transform: translateY(-100vh); }
+            to { transform: translateY(100vh); }
+        }
+
+        #exit-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff4d4d;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        #exit-button:hover {
+            background: #ff3333;
+        }
+
+        #welcome-message {
+            font-size: 30px;
+            color: white;
+            margin-top: 20px;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        #message, #countdown {
+            font-size: 30px;
+            color: white;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 18px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-message">Hoşgeldiniz! Lütfen bir oyun seçin</div>
+    <button onclick="goToGame('https://arcade.makecode.com/62392-76455-86788-17165')">Parkur Oyunu 🎮</button>
+    <button onclick="goToGame('https://arcade.makecode.com/S65068-78374-18319-10918')">Araba Futbolu 🚗⚽</button>
+    <button id="exit-button" onclick="exitPage()">Çıkış Yap</button>
+    <div id="message">İyi Eğlenceler! 🎮</div>
+    <div id="countdown">3</div>
+    <div id="footer">Made by Ali Efe and İnan Ulaş </div>
+
+    <script>
+        function createStars() {
+            for (let i = 0; i < 50; i++) {
+                let star = document.createElement("div");
+                star.className = "star";
+                star.style.left = Math.random() * 100 + "vw";
+                star.style.animationDuration = (Math.random() * 3 + 3) + "s";
+                document.body.appendChild(star);
+            }
+        }
+        createStars();
+
+        function confettiEffect() {
+            confetti({
+                particleCount: 200,
+                spread: 120,
+                startVelocity: 50,
+                origin: { y: 0.6 }
+            });
+
+            document.getElementById("message").style.opacity = "1";
+            document.getElementById("countdown").style.opacity = "1";
+            let countdown = document.getElementById("countdown");
+            countdown.innerText = "3";
+            
+            setTimeout(() => countdown.innerText = "2", 500);
+            setTimeout(() => countdown.innerText = "1", 1000);
+        }
+
+        function goToGame(url) {
+            confettiEffect();
+
+            let countdown = document.getElementById("countdown");
+
+            setTimeout(() => {
+                window.location.href = url; 
+            }, 2000); // 2 saniye sonra yönlendirilecek
+        }
+
+        function exitPage() {
+            window.location.href = "index.html"; // Bu URL'yi kendi index sayfanıza göre değiştirin.
+        }
+
+        // Giriş mesajını 5 saniye sonra kaldır
+        setTimeout(() => {
+            document.getElementById("welcome-message").style.opacity = "0";
+        }, 5000);
+
+        // Konfeti efekti tetikleme
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', confettiEffect);
+        });
+    </script>
+</body>
+</html>
