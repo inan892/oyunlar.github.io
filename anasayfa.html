@@ -15,18 +15,14 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            animation: colorChange 6s infinite alternate;
-            position: relative;
             color: white;
             font-family: Arial, sans-serif;
+            transition: background 0.5s;
         }
 
-        @keyframes colorChange {
-            0% { background: #1a1a2e; }
-            25% { background: #25274d; }
-            50% { background: #16213e; }
-            75% { background: #0f3460; }
-            100% { background: #1a1a2e; }
+        .dark-mode {
+            background: #f5f5f5;
+            color: black;
         }
 
         button {
@@ -48,23 +44,42 @@
             box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
         }
 
-        button:active {
-            transform: scale(0.9);
+        .game-button {
+            position: relative;
+            display: inline-block;
         }
 
-        .star {
+        .tooltip {
+            visibility: hidden;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.8;
-            animation: moveStars 10s linear infinite;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            font-size: 14px;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
         }
 
-        @keyframes moveStars {
-            from { transform: translateY(-100vh); }
-            to { transform: translateY(100vh); }
+        .game-button:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        #theme-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #ff4d4d;
+            padding: 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
         }
 
         #exit-button {
@@ -77,83 +92,116 @@
             border-radius: 50px;
             cursor: pointer;
             font-size: 20px;
-            transition: all 0.3s ease;
-        }
-
-        #exit-button:hover {
-            background: #ff3333;
         }
 
         #welcome-message {
             font-size: 24px;
-            color: white;
             margin-top: 20px;
-            opacity: 1;
-            transition: opacity 1s ease-out;
         }
 
         #message, #countdown {
             font-size: 30px;
-            color: white;
             margin-top: 20px;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
 
         #footer {
-            position: relative;
+            position: absolute;
             bottom: 40px;
             font-size: 16px;
-            color: white;
             text-align: center;
-            margin-top: 20px;
         }
 
-        /* Mobil uyumluluk */
         @media (max-width: 600px) {
-            body {
-                font-size: 14px;
-                padding: 10px;
-            }
-
             button {
                 font-size: 16px;
-                padding: 12px 25px;
+                padding: 12px 20px;
             }
 
-            #welcome-message {
-                font-size: 20px;
+            #exit-button {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                font-size: 16px;
             }
+        }
 
-            #footer {
-                font-size: 14px;
-                bottom: 20px;
-            }
+        /* Müzik paneli */
+        #music-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 200px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        #music-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #4CAF50;
+            border: none;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        #music-toggle:hover {
+            background: #45a049;
+        }
+
+        #volume-slider {
+            width: 100%;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="welcome-message">Hoşgeldiniz! Lütfen bir oyun seçin</div>
-    <button onclick="goToGame('https://arcade.makecode.com/62392-76455-86788-17165')">Parkur Oyunu 🎮</button>
-    <button onclick="goToGame('https://arcade.makecode.com/S65068-78374-18319-10918')">Araba Futbolu 🚗⚽</button>
+    <button id="theme-button" onclick="toggleTheme()">🌗 Tema Değiştir</button>
     <button id="exit-button" onclick="exitPage()">Çıkış Yap</button>
+
+    <div id="welcome-message">Hoşgeldiniz! Lütfen bir oyun seçin</div>
+
+    <div class="game-button">
+        <button onclick="goToGame('https://arcade.makecode.com/62392-76455-86788-17165')">Parkur Oyunu 🎮</button>
+        <div class="tooltip">Engelleri aş ve en hızlı sürede bitişe ulaş!</div>
+    </div>
+
+    <div class="game-button">
+        <button onclick="goToGame('https://arcade.makecode.com/S65068-78374-18319-10918')">Araba Futbolu 🚗⚽</button>
+        <div class="tooltip">Rakibine karşı arabayla futbol oynayın!</div>
+    </div>
+
     <div id="message">İyi Eğlenceler! 🎮</div>
     <div id="countdown">3</div>
+
     <div id="footer">Made by Ali Efe and İnan Ulaş</div>
 
-    <script>
-        function createStars() {
-            for (let i = 0; i < 50; i++) {
-                let star = document.createElement("div");
-                star.className = "star";
-                star.style.left = Math.random() * 100 + "vw";
-                star.style.animationDuration = (Math.random() * 5 + 5) + "s";
-                document.body.appendChild(star);
-            }
-        }
-        createStars();
+    <!-- Arkaplan müziği -->
+    <audio id="bg-music" loop>
+        <source src="muzik.mp3" type="audio/mpeg">
+    </audio>
 
-        function confettiEffect() {
+    <!-- Müzik Kontrol Paneli -->
+    <button id="music-toggle" onclick="toggleMusicPanel()">🎵</button>
+    <div id="music-panel">
+        <p>Müzik Kontrolü</p>
+        <button onclick="toggleMusic()">🔊 Müziği Kapat</button>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" onchange="changeVolume(this.value)">
+    </div>
+
+    <script>
+        function goToGame(url) {
             confetti({
                 particleCount: 200,
                 spread: 120,
@@ -168,35 +216,66 @@
             
             setTimeout(() => countdown.innerText = "2", 500);
             setTimeout(() => countdown.innerText = "1", 1000);
-        }
-
-        function goToGame(url) {
-            confettiEffect();
-
-            let countdown = document.getElementById("countdown");
 
             setTimeout(() => {
-                window.location.href = url; 
-            }, 2000); // 2 saniye sonra yönlendirilecek
+                window.location.href = url;
+            }, 2000);
         }
 
         function exitPage() {
-            window.location.href = "index.html"; // Bu URL'yi kendi index sayfanıza göre değiştirin.
+            window.location.href = "index.html";
         }
 
-        // Giriş mesajını 5 saniye sonra kaldır
-        setTimeout(() => {
-            document.getElementById("welcome-message").style.opacity = "0";
-        }, 5000);
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+            let theme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+            localStorage.setItem("theme", theme);
+        }
 
-        // "İyi Eğlenceler" mesajını geri sayım bittikten sonra kaybolacak
-        setTimeout(() => {
-            document.getElementById("message").style.opacity = "0";
-        }, 8000); // 8 saniye sonra kaybolacak
+        function toggleMusic() {
+            let music = document.getElementById("bg-music");
+            let musicButton = document.querySelector("#music-panel button");
 
-        // Konfeti efekti tetikleme
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('click', confettiEffect);
+            if (music.paused) {
+                music.play();
+                musicButton.innerText = "🔊 Müziği Kapat";
+                localStorage.setItem("musicState", "on");
+            } else {
+                music.pause();
+                musicButton.innerText = "🔇 Müziği Aç";
+                localStorage.setItem("musicState", "off");
+            }
+        }
+
+        function changeVolume(value) {
+            let music = document.getElementById("bg-music");
+            music.volume = value;
+            localStorage.setItem("musicVolume", value);
+        }
+
+        function toggleMusicPanel() {
+            let panel = document.getElementById("music-panel");
+            panel.style.display = panel.style.display === "flex" ? "none" : "flex";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Müzik otomatik başlasın
+            let music = document.getElementById("bg-music");
+            music.play().catch(e => {
+                // Eğer autoplay engellenirse, kullanıcı etkileşimi gereklidir
+                console.log("Müzik başlamadı, kullanıcı etkileşimi bekleniyor.");
+            });
+
+            // Kullanıcı tercihlerini al
+            let savedMusicState = localStorage.getItem("musicState") || "on";
+            let savedVolume = localStorage.getItem("musicVolume") || 1;
+            document.getElementById("volume-slider").value = savedVolume;
+            music.volume = savedVolume;
+
+            if (savedMusicState === "off") {
+                music.pause();
+                document.querySelector("#music-panel button").innerText = "🔇 Müziği Aç";
+            }
         });
     </script>
 </body>
